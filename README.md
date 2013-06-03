@@ -1,4 +1,4 @@
 megadono
 ========
 
-A test program for my sister Dono
+A program for test examinations. Made for my sister, Dono.
