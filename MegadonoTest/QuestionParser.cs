@@ -44,7 +44,15 @@ namespace MegadonoTest
                 if (!ReadLine())
                     return null;
 
-                int[] nums = _curLine.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+                int[] nums;
+                try
+                {
+                    nums = _curLine.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+                }
+                catch (FormatException)
+                {
+                    throw new ApplicationException("Числа в непонятном формате: " + _curLine);
+                }
                 if (nums.Length < 4)
                 {
                     ReadUntilBlankLine();
