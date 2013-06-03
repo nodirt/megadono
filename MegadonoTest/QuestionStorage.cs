@@ -26,14 +26,12 @@ namespace MegadonoTest
             get { return _questions; }
         }
 
-        static Encoding _windows1251 = Encoding.GetEncoding(1251);
-
         public void Load(string filename)
         {
             var parser = new QuestionParser();
             try
             {
-                using (var reader = new StreamReader(filename, _windows1251))
+                using (var reader = new StreamReader(filename, Encoding.UTF8))
                 {
                     _questions = parser.Parse(reader);
                 }
