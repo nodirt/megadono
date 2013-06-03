@@ -33,7 +33,10 @@ namespace MegadonoTest
             {
                 using (var reader = new StreamReader(filename, Encoding.UTF8))
                 {
-                    _questions = parser.Parse(reader);
+                    var parseResult = parser.Parse(reader);
+                    foreach (var ex in parseResult.Errors)
+                        App.Log.WriteException(ex, false);
+                    _questions = parseResult.Questions;
                 }
             }
             catch (Exception ex)

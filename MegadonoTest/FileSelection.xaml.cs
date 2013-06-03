@@ -39,11 +39,11 @@ namespace MegadonoTest
 
             fileName = Path.Combine(QuestionStorage.QuestionDirectory, fileName);
 
-            QuestionStorage questions;
             try
             {
-                questions = new QuestionStorage();
+                var questions = new QuestionStorage();
                 questions.Load(fileName);
+                App.Log.WriteLine(string.Format("Загружено {0} вопросов", questions.Questions.Count));
                 App.MainWindow.Transition(new TestView(questions));
             }
             catch (Exception ex)

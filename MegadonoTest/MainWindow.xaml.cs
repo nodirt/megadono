@@ -60,15 +60,31 @@ namespace MegadonoTest
             log.ScrollToEnd();
 
         }
-        public void WriteException(Exception ex)
+        public void WriteException(Exception ex, bool stack = true)
         {
-            WriteLine(ex.ToString());
+            string message;
+            if (stack)
+            {
+                message = ex.ToString();
+            }
+            else
+            {
+                message = string.Empty;
+                for (; ex != null; ex = ex.InnerException)
+                {
+                    if (message.Length > 0)
+                        message += Environment.NewLine;
+                    message += ex.Message;
+                }
+            }
+
+            WriteLine(message);
         }
     }
 
     interface ILog
     {
         void WriteLine(string message);
-        void WriteException(Exception ex);
+        void WriteException(Exception ex, bool stack = true);
     }
 }
