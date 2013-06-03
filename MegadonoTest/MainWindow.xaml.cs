@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,11 +19,12 @@ namespace MegadonoTest
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, ILog
     {
-        public void Transition(object content)
+        public void Transition(UIElement content)
         {
-            Content = content;
+            placeholder.Children.Clear();
+            placeholder.Children.Add(content);
         }
         void ShowError(string text)
         {
@@ -32,6 +34,41 @@ namespace MegadonoTest
         public MainWindow()
         {
             InitializeComponent();
+
+            App.Log = this;
+            WriteLine("Программа запущена");
         }
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            WriteLine("Конец");
+        }
+
+        public void WriteLine(string message)
+        {
+            string text = string.Format("[{0}] {1}{2}", DateTime.Now.ToString(), message, Environment.NewLine);
+            log.AppendText(text);
+
+            try
+            {
+                File.AppendAllText("megadono.log", text, Encoding.UTF8);
+            }
+            catch (IOException)
+            {
+            }
+
+            log.ScrollToEnd();
+
+        }
+        public void WriteException(Exception ex)
+        {
+            WriteLine(ex.ToString());
+        }
+    }
+
+    interface ILog
+    {
+        void WriteLine(string message);
+        void WriteException(Exception ex);
     }
 }

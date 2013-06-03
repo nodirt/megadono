@@ -21,21 +21,11 @@ namespace MegadonoTest
         {
             get { return (App)Application.Current; }
         }
+        public static ILog Log { get; set; }
 
-        public QuestionStorage QuestionStorage { get; private set; }
-        protected override void OnStartup(StartupEventArgs e)
+        public App()
         {
-            QuestionStorage = new QuestionStorage();
-            try
-            {
-                QuestionStorage.Load();
-            }
-            catch (Exception ex)
-            {
-                MainWindow.Content = new ErrorView(ex.Message);
-            }
-
-            base.OnStartup(e);
+            StartupUri = new System.Uri("MainWindow.xaml", System.UriKind.Relative);
         }
 
         [STAThread]
@@ -44,7 +34,6 @@ namespace MegadonoTest
             try
             {
                 App app = new App();
-                app.StartupUri = new System.Uri("MainWindow.xaml", System.UriKind.Relative);
                 app.Run();
             }
             catch (Exception ex)

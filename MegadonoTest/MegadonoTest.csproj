@@ -50,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="FileSelection.xaml.cs">
+      <DependentUpon>FileSelection.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ResultsView.xaml.cs">
       <DependentUpon>ResultsView.xaml</DependentUpon>
     </Compile>
@@ -66,6 +69,10 @@
       <DependentUpon>TestView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
+    <Page Include="FileSelection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ResultsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -119,7 +126,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="questions\megadono.txt">
+    <None Include="questions\gek.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

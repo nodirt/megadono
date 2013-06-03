@@ -22,6 +22,7 @@ namespace MegadonoTest
     /// </summary>
     public partial class TestView : UserControl
     {
+        QuestionStorage _storage;
         List<TestQuestion> _questions;
         int _currentIndex = 0;
         int _maxIndex = 0;
@@ -31,15 +32,18 @@ namespace MegadonoTest
             get { return _questions[_currentIndex]; }
         }
 
-        public TestView()
+        public TestView(QuestionStorage storage)
         {
             InitializeComponent();
 
-            _questions = App.Current.QuestionStorage.Questions.Shuffle()
+            _storage = storage;
+            _questions = storage.Questions.Shuffle()
                 .Select(q => new TestQuestion(q))
                 .ToList();
 
             GoTo(0);
+
+            App.Log.WriteLine("Начался тест " + storage.Name);
         }
 
         void GoTo(int questionIndex)
@@ -114,6 +118,7 @@ namespace MegadonoTest
             var answeredQuestions = _questions.Take(_maxIndex + 1).ToList();
             var results = new TestResults
             {
+                Storage = _storage,
                 QuestionCount = _maxIndex + 1,
                 MaxPoints = answeredQuestions.Sum(a => a.MaxPoints),
                 GotPoints = answeredQuestions.Sum(a => a.GotPoints)

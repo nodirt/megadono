@@ -9,11 +9,15 @@ namespace MegadonoTest
 {
     public class QuestionStorage
     {
+        public string Name { get; set; }
+
         const string QuestionsFolderName = "questions";
-        static string _dirPath;
+        public static readonly string QuestionDirectory;
         static QuestionStorage()
         {
-            _dirPath = Path.Combine(Path.GetDirectoryName(typeof(QuestionStorage).Assembly.Location), QuestionsFolderName);
+            QuestionDirectory = Path.Combine(Path.GetDirectoryName(typeof(QuestionStorage).Assembly.Location), QuestionsFolderName);
+            if (!Directory.Exists(QuestionDirectory))
+                Directory.CreateDirectory(QuestionDirectory);
         }
 
         List<Question> _questions = new List<Question>();
@@ -24,52 +28,33 @@ namespace MegadonoTest
 
         static Encoding _windows1251 = Encoding.GetEncoding(1251);
 
-        public void Load()
+        public void Load(string filename)
         {
-            _questions.Clear();
-            if (!Directory.Exists(_dirPath))
-                throw new ApplicationException("Вы меня простите, конечно, но где папка с вопросами?? Вот эта:" + Environment.NewLine + _dirPath);
-
-            var files = Directory.GetFiles(_dirPath, "*.txt");
-            if (files.Length == 0)
-                throw new ApplicationException("А где, собственно, файлы вопросов? Хотя бы один файл .txt был бы в папке " + Environment.NewLine + _dirPath);
-
             var parser = new QuestionParser();
-            var errors = new List<ParseError>();
-            foreach (var filename in files)
+            try
             {
-                try
+                using (var reader = new StreamReader(filename, _windows1251))
                 {
-                    using (var reader = new StreamReader(filename, _windows1251))
-                    {
-                        _questions.AddRange(parser.Parse(reader));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    errors.Add(new ParseError { Filename = filename, Exception = ex });
+                    _questions = parser.Parse(reader);
                 }
             }
-
-            if (_questions.Count == 0)
+            catch (Exception ex)
             {
                 var msg = new StringBuilder();
                 msg.AppendLine("Я чё-то не понял!");
-                foreach (var err in errors)
-                {
-                    msg.AppendFormat("Файл {0}:", Path.GetFileName(err.Filename)).AppendLine();
-                    msg.AppendLine(err.Exception.Message);
-                    msg.AppendLine();
-                }
+                msg.AppendFormat("Файл {0}:", Path.GetFileName(filename)).AppendLine();
+                msg.AppendLine(ex.Message);
+                msg.AppendLine();
                 msg.Append("Как-то так...");
                 throw new ApplicationException(msg.ToString());
             }
-        }
 
-        class ParseError
-        {
-            public string Filename { get; set; }
-            public Exception Exception { get; set; }
+            Name = Path.GetFileNameWithoutExtension(filename);
+
+            if (_questions.Count == 0)
+            {
+                throw new ApplicationException("Вопросов-то в файле нет!");
+            }
         }
     }
 }
